@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semester CIA Internal Mark Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --green: #0f4a3a;
+    --green-dark: #0a3429;
+    --gold: #c9972b;
+    --navy: #1f2c73;
+    --bg: #eef2f1;
+    --card: #ffffff;
+    --text: #1d2a27;
+    --muted: #64748b;
+    --line: #dbe3e0;
+    --ok: #0b7a4b;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    font-family: "Poppins", "Noto Sans Tamil", Arial, sans-serif;
+    background: linear-gradient(160deg, var(--bg) 0%, #dfe9e6 100%);
+    color: var(--text);
+    margin: 0;
+    padding: 20px 14px 40px;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    background: var(--card);
+    border-radius: 18px;
+    box-shadow: 0 10px 35px rgba(15, 74, 58, .15);
+    overflow: hidden;
+}
+
+/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 26px 20px;
+    background: linear-gradient(135deg, var(--green-dark), var(--green));
+    border-bottom: 4px solid var(--gold);
+    color: #fff;
+}
+
+.logo {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #fff;
+    border: 3px solid var(--gold);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .35);
+}
+
+.university-name {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: .5px;
+}
+
+.subtitle {
+    font-size: 13px;
+    color: #e7d8aa;
+    margin-top: 2px;
+}
+
+.content { padding: 8px 24px 28px; }
+
+h1 {
+    text-align: center;
+    color: var(--green);
+    font-size: 24px;
+    font-weight: 600;
+    margin: 26px 0 20px;
+}
+
+/* Table */
+.table-box {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+}
+
+table {
+    width: 100%;
+    min-width: 1100px;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px 8px;
+    text-align: center;
+    border-bottom: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+}
+
+th:last-child, td:last-child { border-right: none; }
+tbody tr:last-child td { border-bottom: none; }
+
+thead th {
+    background: var(--green);
+    color: #fff;
+    font-weight: 500;
+    font-size: 14px;
+    border-color: rgba(255, 255, 255, .2);
+}
+
+thead tr:nth-child(2) th {
+    background: var(--navy);
+    font-size: 12.5px;
+}
+
+tbody tr:nth-child(even) { background: #f6faf9; }
+tbody tr:hover { background: #fff7e0; }
+
+input {
+    width: 78px;
+    padding: 9px 6px;
+    font: inherit;
+    font-size: 14px;
+    text-align: center;
+    border: 1px solid #b9c6c2;
+    border-radius: 8px;
+    background: #fff;
+    transition: border-color .15s, box-shadow .15s;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201, 151, 43, .25);
+}
+
+input.subject {
+    width: 160px;
+    text-align: left;
+    padding-left: 10px;
+}
+
+.result {
+    color: var(--ok);
+    font-weight: 600;
+    min-width: 210px;
+}
+
+.result .mark { font-size: 16px; white-space: nowrap; }
+
+.result .tamil {
+    margin-top: 4px;
+    font-family: "Noto Sans Tamil", "Poppins", sans-serif;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--navy);
+    line-height: 1.5;
+}
+
+/* Buttons */
+.buttons {
+    text-align: center;
+    margin: 24px 0 8px;
+}
+
+button {
+    font: inherit;
+    font-weight: 500;
+    font-size: 15px;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 10px;
+    margin: 5px;
+    cursor: pointer;
+    transition: transform .12s, box-shadow .12s;
+}
+
+button:hover { transform: translateY(-2px); }
+button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+.calculate {
+    background: linear-gradient(135deg, var(--green), var(--navy));
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(31, 44, 115, .3);
+}
+
+.reset {
+    background: #fff;
+    color: #c62828;
+    border: 2px solid #c62828;
+}
+
+.reset:hover { background: #fdecec; }
+
+
+/* Login screen */
+#loginScreen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.login-card {
+    width: 100%;
+    max-width: 400px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 10px 35px rgba(15, 74, 58, .2);
+    overflow: hidden;
+}
+.login-head {
+    background: linear-gradient(135deg, var(--green-dark), var(--green));
+    border-bottom: 4px solid var(--gold);
+    color: #fff;
+    text-align: center;
+    padding: 26px 20px;
+}
+.login-head .logo { margin: 0 auto 10px; display: block; }
+.login-head h2 { margin: 0; font-size: 21px; }
+.login-head p { margin: 4px 0 0; font-size: 13px; color: #e7d8aa; font-family: "Noto Sans Tamil", "Poppins", sans-serif; }
+.login-body { padding: 24px; }
+.login-body label { display: block; font-size: 13px; color: var(--muted); margin: 12px 0 5px; }
+.login-body input { width: 100%; padding: 11px 12px; text-align: left; font-size: 15px; }
+.login-body button { width: 100%; margin: 20px 0 0; background: linear-gradient(135deg, var(--green), var(--navy)); color: #fff; }
+.login-error { color: #c62828; font-size: 13px; text-align: center; margin-top: 12px; min-height: 18px; font-family: "Noto Sans Tamil", "Poppins", sans-serif; }
+.logout-bar { text-align: right; padding: 12px 24px 0; }
+.logout-bar button { margin: 0; padding: 8px 18px; font-size: 13px; background: #fff; color: var(--green); border: 2px solid var(--green); }
+#app { display: none; }
+
+@media (max-width: 700px) {
+    .university-name { font-size: 20px; }
+    .logo { width: 68px; height: 68px; }
+    h1 { font-size: 19px; }
+    .content { padding: 4px 12px 22px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- Login -->
+<div id="loginScreen">
+    <form class="login-card" id="loginForm" autocomplete="off">
+        <div class="login-head">
+            <img class="logo" alt="Thiruvalluvar University logo">
+            <h2>Thiruvalluvar University</h2>
+            <p>உள்நுழைய உங்கள் விவரங்களை உள்ளிடவும்</p>
+        </div>
+        <div class="login-body">
+            <label for="user">Username</label>
+            <input type="text" id="user" autocomplete="username" required>
+            <label for="pass">Password</label>
+            <input type="password" id="pass" autocomplete="current-password" required>
+            <button type="submit">Login</button>
+            <div class="login-error" id="loginError"></div>
+        </div>
+    </form>
+</div>
+
+<div id="app">
+<div class="logout-bar"><button onclick="logout()">Logout</button></div>
+
+<div class="container">
+
+    <header class="header">
+        <img class="logo" alt="Thiruvalluvar University logo">
+        <div>
+            <div class="university-name">Thiruvalluvar University</div>
+            <div class="subtitle">Continuous Internal Assessment</div>
+        </div>
+    </header>
+
+    <main class="content">
+
+        <h1>Semester CIA Internal Mark Calculator</h1>
+
+        <div class="table-box">
+            <table>
+                <thead>
+                    <tr>
+                        <th rowspan="2">S.No</th>
+                        <th rowspan="2">Subject Name</th>
+                        <th colspan="2">CIA 1</th>
+                        <th colspan="2">CIA 2</th>
+                        <th colspan="2">CIA 3</th>
+                        <th rowspan="2">Internal /25</th>
+                    </tr>
+                    <tr>
+                        <th>Test /50</th>
+                        <th>Assignment /10</th>
+                        <th>Test /50</th>
+                        <th>Assignment /10</th>
+                        <th>Test /100</th>
+                        <th>Assignment /10</th>
+                    </tr>
+                </thead>
+                <tbody id="rows"></tbody>
+            </table>
+        </div>
+
+        <div class="buttons">
+            <button class="calculate" onclick="calculateMarks()">Calculate CIA marks</button>
+            <button class="reset" onclick="resetMarks()">Reset</button>
+        </div>
+
+
+    </main>
+</div>
+</div>
+
+<script>
+// Logo (small, split into short lines so copy-paste does not cut it)
+const LOGO = "data:image/jpeg;base64," + [
+    "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",
+    "aFaP/9k="
+].join("");
+document.querySelectorAll(".logo").forEach(img => { img.src = LOGO; });
+
+
+// ---------- Login ----------
+// SHA-256 hash of "username:password" (lowercase username).
+// Change it using the steps given in the chat. Do NOT store the plain password here.
+const CREDENTIAL_HASH = "1a0d630d371ac660bac29dfa486cd5e7cd17befabe6e6ece8d6be98534416070";
+const SESSION_KEY = "cia_logged_in";
+
+// Pure JavaScript SHA-256 (works on http, https and when the file is opened directly)
+function sha256(msg) {
+    const K = [
+        0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+        0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+        0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+        0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+        0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+        0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+        0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+        0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
+    ];
+    const bytes = Array.from(new TextEncoder().encode(msg));
+    const bitLen = bytes.length * 8;
+    bytes.push(0x80);
+    while (bytes.length % 64 !== 56) bytes.push(0);
+    for (let i = 7; i >= 0; i--) bytes.push(i >= 4 ? 0 : (bitLen >>> (i * 8)) & 0xff);
+
+    let H = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+    const rotr = (x, n) => (x >>> n) | (x << (32 - n));
+
+    for (let o = 0; o < bytes.length; o += 64) {
+        const w = new Array(64);
+        for (let i = 0; i < 16; i++) {
+            w[i] = (bytes[o+i*4] << 24) | (bytes[o+i*4+1] << 16) | (bytes[o+i*4+2] << 8) | bytes[o+i*4+3];
+        }
+        for (let i = 16; i < 64; i++) {
+            const s0 = rotr(w[i-15],7) ^ rotr(w[i-15],18) ^ (w[i-15] >>> 3);
+            const s1 = rotr(w[i-2],17) ^ rotr(w[i-2],19) ^ (w[i-2] >>> 10);
+            w[i] = (w[i-16] + s0 + w[i-7] + s1) | 0;
+        }
+        let [a,b,c,d,e,f,g,hh] = H;
+        for (let i = 0; i < 64; i++) {
+            const S1 = rotr(e,6) ^ rotr(e,11) ^ rotr(e,25);
+            const ch = (e & f) ^ (~e & g);
+            const t1 = (hh + S1 + ch + K[i] + w[i]) | 0;
+            const S0 = rotr(a,2) ^ rotr(a,13) ^ rotr(a,22);
+            const maj = (a & b) ^ (a & c) ^ (b & c);
+            const t2 = (S0 + maj) | 0;
+            hh = g; g = f; f = e; e = (d + t1) | 0;
+            d = c; c = b; b = a; a = (t1 + t2) | 0;
+        }
+        H = H.map((v, i) => (v + [a,b,c,d,e,f,g,hh][i]) | 0);
+    }
+    return H.map(v => (v >>> 0).toString(16).padStart(8, "0")).join("");
+}
+
+function showApp(on) {
+    document.getElementById("app").style.display = on ? "block" : "none";
+    document.getElementById("loginScreen").style.display = on ? "none" : "flex";
+}
+
+document.getElementById("loginForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const u = document.getElementById("user").value.trim().toLowerCase();
+    const p = document.getElementById("pass").value;
+    const err = document.getElementById("loginError");
+    if (sha256(u + ":" + p) === CREDENTIAL_HASH) {
+        try { sessionStorage.setItem(SESSION_KEY, "yes"); } catch (x) {}
+        err.textContent = "";
+        document.getElementById("pass").value = "";
+        showApp(true);
+    } else {
+        err.textContent = "தவறான யூசர் நேம் அல்லது பாஸ்வேர்ட்";
+    }
+});
+
+function logout() {
+    try { sessionStorage.removeItem(SESSION_KEY); } catch (x) {}
+    showApp(false);
+}
+
+let remembered = false;
+try { remembered = sessionStorage.getItem(SESSION_KEY) === "yes"; } catch (x) {}
+showApp(remembered);
+
+const tbody = document.getElementById("rows");
+const SUBJECTS = 7;
+
+// Build the 7 subject rows
+for (let i = 1; i <= SUBJECTS; i++) {
+    tbody.insertAdjacentHTML("beforeend", `
+    <tr>
+        <td>${i}</td>
+        <td><input type="text" class="subject" placeholder="Subject ${i}"></td>
+        <td><input type="number" class="c1" min="0" max="50" step="any"></td>
+        <td><input type="number" class="a1" min="0" max="10" step="any"></td>
+        <td><input type="number" class="c2" min="0" max="50" step="any"></td>
+        <td><input type="number" class="a2" min="0" max="10" step="any"></td>
+        <td><input type="number" class="c3" min="0" max="100" step="any"></td>
+        <td><input type="number" class="a3" min="0" max="10" step="any"></td>
+        <td class="result">-</td>
+    </tr>`);
+}
+
+function calculateMarks() {
+    const fields = ["c1", "a1", "c2", "a2", "c3", "a3"];
+    const limits = [50, 10, 50, 10, 100, 10];
+
+    for (const row of tbody.querySelectorAll("tr")) {
+        const values = fields.map(f => row.querySelector("." + f).value.trim());
+        const result = row.querySelector(".result");
+
+        // Skip empty subjects
+        if (values.every(v => v === "")) {
+            result.textContent = "-";
+            continue;
+        }
+
+        // All six marks are required
+        if (values.some(v => v === "")) {
+            alert("Please enter all six marks for each subject.");
+            return;
+        }
+
+        const marks = values.map(Number);
+
+        if (marks.some((v, i) => !Number.isFinite(v) || v < 0 || v > limits[i])) {
+            alert("Please enter valid marks within the given limits.");
+            return;
+        }
+
+        const [c1, a1, c2, a2, c3, a3] = marks;
+
+        // Convert each CIA test to 10 marks
+        const testAverage = ((c1 / 50) * 10 + (c2 / 50) * 10 + (c3 / 100) * 10) / 3;
+        const assignmentAverage = (a1 + a2 + a3) / 3;
+
+        // 20 marks scaled to 25
+        const finalMark = Number((((testAverage + assignmentAverage) / 20) * 25).toFixed(2));
+
+        const name = row.querySelector(".subject").value.trim() || ("பாடம் " + row.cells[0].textContent);
+
+        result.innerHTML = "";
+        const mark = document.createElement("div");
+        mark.className = "mark";
+        mark.textContent = finalMark + " / 25";
+
+        const tamil = document.createElement("div");
+        tamil.className = "tamil";
+        tamil.textContent = name + " – அக மதிப்பெண்: " + finalMark + " / 25";
+
+        result.append(mark, tamil);
+    }
+
+}
+
+function resetMarks() {
+    document.querySelectorAll("input").forEach(i => i.value = "");
+    document.querySelectorAll(".result").forEach(r => r.textContent = "-");
+}
+</script>
+
+</body>
+</html>
